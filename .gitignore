@@ -60,3 +60,7 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+.secrets
+
+# Ignore Secret.plist for local secrets
+PostApp/Secret.plist
