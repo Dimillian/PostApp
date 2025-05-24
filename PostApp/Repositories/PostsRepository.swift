@@ -49,8 +49,8 @@ final class PostsRepository {
     // MARK: - Create Post
 
     @MainActor
-    func createPost(title: String, subtitle: String, body: String) async throws {
-        let newPost = Post(title: title, subtitle: subtitle, body: body)
+    func createPost(title: String, subtitle: String, body: String, htmlBody: String? = nil) async throws {
+        let newPost = Post(title: title, subtitle: subtitle, body: body, htmlBody: htmlBody)
 
         try await supabaseService.createPost(newPost)
 

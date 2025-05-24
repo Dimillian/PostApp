@@ -66,6 +66,7 @@ final class SupabaseService {
                     "title": post.title,
                     "subtitle": post.subtitle,
                     "body": post.body,
+                    "html_body": post.htmlBody,
                     "created_at": isoDate
                 ]
             ])
@@ -77,7 +78,8 @@ final class SupabaseService {
             .update([
                 "title": post.title,
                 "subtitle": post.subtitle,
-                "body": post.body
+                "body": post.body,
+                "html_body": post.htmlBody
             ])
             .eq("id", value: post.id.uuidString)
             .execute()

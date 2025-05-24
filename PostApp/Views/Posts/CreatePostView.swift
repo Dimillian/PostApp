@@ -11,7 +11,8 @@ struct CreatePostView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var title = ""
     @State private var subtitle = ""
-    @State private var postBody = ""
+    @State private var attributedBody = NSAttributedString(string: "")
+    @State private var selectedRange = NSRange(location: 0, length: 0)
     @State private var isCreating = false
     @State private var showingError = false
     @State private var errorMessage = ""
@@ -21,24 +22,36 @@ struct CreatePostView: View {
     private var isFormValid: Bool {
         !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
         !subtitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        !postBody.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !attributedBody.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Post Information") {
-                    TextField("Title", text: $title, axis: .vertical)
-                        .lineLimit(1...3)
+            VStack(spacing: 0) {
+                Form {
+                    Section("Post Information") {
+                        TextField("Title", text: $title, axis: .vertical)
+                            .lineLimit(1...3)
 
-                    TextField("Subtitle", text: $subtitle, axis: .vertical)
-                        .lineLimit(1...3)
-                }
+                        TextField("Subtitle", text: $subtitle, axis: .vertical)
+                            .lineLimit(1...3)
+                    }
 
-                Section("Content") {
-                    TextEditor(text: $postBody)
+                    Section("Content") {
+                        RichTextEditor(
+                            attributedText: $attributedBody,
+                            selectedRange: $selectedRange,
+                            onTextChange: { _ in }
+                        )
                         .frame(minHeight: 200)
+                    }
                 }
+
+                // Rich text toolbar
+                RichTextToolbar(
+                    attributedText: $attributedBody,
+                    selectedRange: $selectedRange
+                )
             }
             .navigationTitle("New Post")
             .navigationBarTitleDisplayMode(.inline)
@@ -79,14 +92,18 @@ struct CreatePostView: View {
         }
     }
 
-    private func createPost() async {
+        private func createPost() async {
         isCreating = true
 
         do {
+            // Convert NSAttributedString to HTML for storage
+            let htmlBody = attributedBody.toHTML()
+
             try await repository.createPost(
                 title: title.trimmingCharacters(in: .whitespacesAndNewlines),
                 subtitle: subtitle.trimmingCharacters(in: .whitespacesAndNewlines),
-                body: postBody.trimmingCharacters(in: .whitespacesAndNewlines)
+                body: attributedBody.string.trimmingCharacters(in: .whitespacesAndNewlines),
+                htmlBody: htmlBody
             )
             dismiss()
         } catch {

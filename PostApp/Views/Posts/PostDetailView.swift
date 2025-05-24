@@ -50,7 +50,8 @@ struct PostDetailView: View {
 
                     Divider()
 
-                    Text(post.body)
+                    // Display rich text content
+                    Text(post.attributedBody)
                         .font(.body)
                         .padding(.horizontal)
                         .textSelection(.enabled)
@@ -88,6 +89,13 @@ struct PostDetailView: View {
             Here's another paragraph with more content to show how the layout works with longer text.
 
             And a third paragraph to really demonstrate the scrolling functionality.
+            """,
+            htmlBody: """
+            <p>This is the <b>body content</b> of the post. It can be quite long and contain <i>multiple paragraphs</i>.</p>
+
+            <p>Here's another paragraph with <u>more content</u> to show how the layout works with longer text.</p>
+
+            <p>And a <span style="color: blue;">third paragraph</span> to really demonstrate the scrolling functionality.</p>
             """
         ),
         readingGoalRepository: ReadingGoalRepository()
